@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Movie Search</title>
+
+<style>
+
+body{
+background:#0f0f0f;
+font-family:Arial;
+text-align:center;
+color:white;
+padding:40px;
+}
+
+.searchbox{
+width:300px;
+padding:12px;
+border-radius:8px;
+border:none;
+font-size:16px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+background:#e50914;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+#player{
+margin-top:30px;
+}
+
+iframe{
+width:90%;
+height:500px;
+border:none;
+border-radius:10px;
+}
+
+.ad{
+margin:20px;
+background:#222;
+padding:15px;
+border-radius:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Search Movie / Series</h1>
+
+<div class="ad">
+Ad Space (Adsense later)
+</div>
+
+<input class="searchbox" id="tmdb" placeholder="Enter TMDb ID">
+
+<button onclick="search()">Search</button>
+
+<div id="player"></div>
+
+<div class="ad">
+Ad Space
+</div>
+
+<script src="data.js"></script>
+
+<script>
+
+function search(){
+
+var id = document.getElementById("tmdb").value;
+
+var item = database[id];
+
+if(!item){
+document.getElementById("player").innerHTML="Not Found";
+return;
+}
+
+if(item.type=="movie"){
+
+document.getElementById("player").innerHTML=
+"<h2>"+item.title+"</h2>"+
+"<iframe src='"+item.link+"'></iframe>";
+
+}
+
+if(item.type=="series"){
+
+var html="<h2>"+item.title+"</h2>";
+
+item.episodes.forEach(function(ep){
+
+html += "<p>"+ep.name+"</p>";
+html += "<iframe src='"+ep.link+"'></iframe>";
+
+});
+
+document.getElementById("player").innerHTML=html;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
