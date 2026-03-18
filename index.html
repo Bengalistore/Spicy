@@ -1,113 +1,194 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Movie Search</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMDb Search</title>
 
 <style>
 
 body{
-background:#0f0f0f;
-font-family:Arial;
-text-align:center;
+margin:0;
+background:#0f172a;
 color:white;
-padding:40px;
+font-family:sans-serif;
 }
 
-.searchbox{
-width:300px;
+.container{
+padding:15px;
+max-width:500px;
+margin:auto;
+}
+
+input{
+width:100%;
 padding:12px;
-border-radius:8px;
+border-radius:10px;
 border:none;
-font-size:16px;
+margin-top:20px;
 }
 
 button{
-padding:12px 20px;
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#22c55e;
 border:none;
-background:#e50914;
 color:white;
+border-radius:10px;
 font-size:16px;
-border-radius:8px;
-cursor:pointer;
 }
 
-#player{
-margin-top:30px;
+.card{
+margin-top:20px;
+background:#1e293b;
+padding:15px;
+border-radius:15px;
 }
 
-iframe{
-width:90%;
-height:500px;
-border:none;
+.poster{
+width:100%;
 border-radius:10px;
 }
 
-.ad{
-margin:20px;
-background:#222;
-padding:15px;
-border-radius:8px;
+.cast{
+display:flex;
+overflow:auto;
+gap:10px;
+margin-top:10px;
+}
+
+.cast img{
+width:70px;
+border-radius:10px;
+}
+
+select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h1>Search Movie / Series</h1>
+<div class="container">
 
-<div class="ad">
-Ad Space (Adsense later)
-</div>
+<h2>Search TMDb</h2>
 
-<input class="searchbox" id="tmdb" placeholder="Enter TMDb ID">
-
+<input id="id" placeholder="Enter TMDb ID">
 <button onclick="search()">Search</button>
 
-<div id="player"></div>
+<div id="result"></div>
 
-<div class="ad">
-Ad Space
 </div>
-
-<script src="data.js"></script>
 
 <script>
 
-function search(){
+const API="fed86956458f19fb45cdd382b6e6de83";
+const BIN_URL="https://api.jsonbin.io/v3/b/69ba5210c3097a1dd5363c92";
+const BIN_KEY="$2a$10$tByBigh5JySCavkqFsCAruTYuldDxnOUWjVQb/gLyeKOU1XKYfG6i";
 
-var id = document.getElementById("tmdb").value;
+async function search(){
 
-var item = database[id];
+let id=document.getElementById("id").value;
 
-if(!item){
-document.getElementById("player").innerHTML="Not Found";
-return;
+let type="movie";
+
+let res=await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API}`);
+
+if(res.status!=200){
+type="tv";
+res=await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API}`);
 }
 
-if(item.type=="movie"){
+let data=await res.json();
 
-document.getElementById("player").innerHTML=
-"<h2>"+item.title+"</h2>"+
-"<iframe src='"+item.link+"'></iframe>";
-
-}
-
-if(item.type=="series"){
-
-var html="<h2>"+item.title+"</h2>";
-
-item.episodes.forEach(function(ep){
-
-html += "<p>"+ep.name+"</p>";
-html += "<iframe src='"+ep.link+"'></iframe>";
-
+// JSON DB fetch
+let db=await fetch(BIN_URL,{
+headers:{"X-Master-Key":BIN_KEY}
 });
 
-document.getElementById("player").innerHTML=html;
+let json=await db.json();
+
+let watchLink=json[id]?.watch || "#";
+
+// UI build
+let html=`
+
+<div class="card">
+
+<img class="poster" src="https://image.tmdb.org/t/p/w500${data.poster_path}">
+
+<h2>${data.title||data.name}</h2>
+
+<p>⭐ ${data.vote_average}</p>
+<p>Release: ${data.release_date||data.first_air_date}</p>
+<p>Language: ${data.original_language}</p>
+
+<p>${data.overview}</p>
+
+<button onclick="watch('${watchLink}')">Watch Now</button>
+
+`;
+
+if(type=="tv"){
+
+html+=`
+<select id="season">
+<option value="1">Season 1</option>
+<option value="2">Season 2</option>
+</select>
+
+<button onclick="watchSeries('${id}')">Watch Series</button>
+`;
 
 }
+
+html+=`<h3>Cast</h3><div id="cast" class="cast"></div></div>`;
+
+document.getElementById("result").innerHTML=html;
+
+// CAST
+let cast=await fetch(`https://api.themoviedb.org/3/${type}/${id}/credits?api_key=${API}`);
+let castData=await cast.json();
+
+let castHTML="";
+
+castData.cast.slice(0,10).forEach(c=>{
+if(c.profile_path){
+castHTML+=`<div><img src="https://image.tmdb.org/t/p/w200${c.profile_path}"><p>${c.name}</p></div>`;
+}
+});
+
+document.getElementById("cast").innerHTML=castHTML;
+
+}
+
+// watch movie
+function watch(link){
+
+// SAFE AD trigger (1 click)
+window.open("https://your-ad-link.com","_blank");
+
+// open movie
+setTimeout(()=>{
+window.open(link,"_blank");
+},1000);
+
+}
+
+// series watch
+function watchSeries(id){
+
+let season=document.getElementById("season").value;
+
+let link=`https://yourwatchlink.com/series/${id}/season/${season}`;
+
+window.open(link,"_blank");
 
 }
 
