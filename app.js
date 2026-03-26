@@ -1,5 +1,9 @@
 const API_KEY = "fed86956458f19fb45cdd382b6e6de83";
 
+// 👉 JSONBin config
+const BIN_ID = "69c49f05aa77b81da91ddfee";
+const MASTER_KEY = "$2a$10$gJvpY1M53MtNjUcZvgS5t.xnWtqRkH8Zy0cGOaMe9K9kq/F6Qk6fO";
+
 // URL parse
 const path = window.location.pathname.split("/");
 const id = path[1];
@@ -11,20 +15,20 @@ if (id) {
   loadDetails(id, season);
 }
 
-// Search redirect
+// Search
 function search() {
   const id = document.getElementById("searchInput").value;
   window.location.href = "/" + id;
 }
 
-// Load Data
+// Main load function
 async function loadDetails(id, season) {
   let data;
   let type = "movie";
 
   // Try movie
   let res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`);
-  
+
   if (res.status === 200) {
     data = await res.json();
   } else {
@@ -33,9 +37,15 @@ async function loadDetails(id, season) {
     data = await res.json();
   }
 
-  // JSONBin fetch
-  const streamRes = await fetch("https://api.jsonbin.io/v3/b/69c49f05aa77b81da91ddfee");
-  const streamData = await streamRes.json();
+  // 🔥 JSONBin fetch with MASTER KEY
+  const streamRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    headers: {
+      "X-Master-Key": MASTER_KEY
+    }
+  });
+
+  const jsonFull = await streamRes.json();
+  const streamData = jsonFull.record;
 
   let streamUrl = "";
 
@@ -49,11 +59,11 @@ async function loadDetails(id, season) {
     streamUrl = streamData[id]?.seasons?.[season];
   }
 
-  render(data, streamUrl, type);
+  render(data, streamUrl);
 }
 
 // Render UI
-function render(data, streamUrl, type) {
+function render(data, streamUrl) {
   const content = document.getElementById("content");
 
   content.innerHTML = `
@@ -64,19 +74,19 @@ function render(data, streamUrl, type) {
   `;
 }
 
-// Season Selector
+// Season selector
 function showSeasonSelector(id, data) {
   const content = document.getElementById("content");
 
-  let seasonsHTML = "";
+  let html = "";
 
   data.seasons.forEach(s => {
-    seasonsHTML += `<button onclick="goSeason(${id}, ${s.season_number})">Season ${s.season_number}</button>`;
+    html += `<button onclick="goSeason(${id}, ${s.season_number})">Season ${s.season_number}</button>`;
   });
 
   content.innerHTML = `
     <h2>${data.name}</h2>
-    ${seasonsHTML}
+    ${html}
   `;
 }
 
