@@ -2,30 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Movie App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <title>FILMY BONGO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #6f63ff, #9f94ff);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    header img {
+      height: 40px;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .telegram {
+      background: #0088cc;
+      color: white;
+    }
+
+    .home {
+      background: white;
+      color: #6f63ff;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="app">
+<header>
+  <!-- Replace with your logo -->
+  <img src="https://via.placeholder.com/120x40?text=LOGO" alt="Logo">
+</header>
 
-  <!-- HOME -->
-  <div id="home">
-    <h1>Movie Search</h1>
-    <input type="number" id="searchInput" placeholder="Enter TMDb ID">
-    <button onclick="search()">Search</button>
+<div class="container">
+  <div class="card">
+    <h1>About Us</h1>
+    <p>
+      Welcome to our website! We provide quality content, updates, and useful resources.
+      Stay connected with us for more amazing stuff.
+    </p>
 
-    <div class="ad-box">Ad Space</div>
+    <a href="https://t.me/+K-qIsB9COvgwMmQ1" class="btn telegram">Join Telegram</a>
+    <a href="https://bongotech42.blogspot.com" class="btn home">Visit Home Page</a>
   </div>
-
-  <!-- DETAILS -->
-  <div id="details" style="display:none;">
-    <div id="content"></div>
-  </div>
-
 </div>
 
-<script src="app.js"></script>
+<footer>
+  © 2026 Filmy Bongo 
+</footer>
+
 </body>
 </html>
